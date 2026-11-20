@@ -163,9 +163,9 @@
     });
     f.querySelector('[data-v=sair]').addEventListener('click', () => auth.signOut());
   }
-  function ecraSemAcesso(u, msg) {
+  function ecraSemAcesso(u, msg, regras) {
     const f = caixa(`<h2 id="lgTit">Sem acesso</h2>
-      <p>O email <b>${esc(u.email)}</b> ainda não está na lista de acessos. Peça ao responsável da plataforma para o acrescentar.</p>
+      <p>${regras ? `A base de dados não deixou confirmar o acesso de <b>${esc(u.email)}</b>. Fale com o responsável da plataforma.` : `O email <b>${esc(u.email)}</b> ainda não está na lista de acessos. Peça ao responsável da plataforma para o acrescentar.`}</p>
       <div class="lg-erro" role="alert">${esc(msg || '')}</div>
       <button type="button" class="lg-pri" data-v="ok">Tentar outra vez</button>
       <div class="lg-links"><button type="button" class="lg-lk" data-v="sair">Sair</button></div>`);
@@ -182,7 +182,7 @@
     let snap;
     try { snap = await fs.doc('acessos/' + norm(u.email)).get(); }
     catch (e) {
-      if (/permission/.test(e.code || '')) { ecraSemAcesso(u, 'A base de dados recusou a leitura (código: regras). Confirme as regras em Firestore › Regras.'); return; }
+      if (/permission/.test(e.code || '')) { ecraSemAcesso(u, 'A base de dados recusou a leitura (código: regras). Confirme as regras em Firestore › Regras.', true); return; }
       ecraSemAcesso(u, 'Sem ligação aos dados. Verifique a internet.'); return;
     }
     if (!snap.exists) { ecraSemAcesso(u, 'Código: não está na lista (acessos/' + norm(u.email) + ').'); return; }
