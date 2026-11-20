@@ -119,8 +119,7 @@
       if (fm.pw.value !== fm.pw2.value) { er.textContent = 'As duas palavras-passe não são iguais.'; return; }
       b.disabled = true; er.textContent = '';
       try {
-        const r = await auth.createUserWithEmailAndPassword(norm(fm.email.value), fm.pw.value);
-        try { await r.user.sendEmailVerification(); } catch (e) { console.warn(e); }
+        await auth.createUserWithEmailAndPassword(norm(fm.email.value), fm.pw.value);
       } catch (e) { er.textContent = erroAuth(e); b.disabled = false; }
     });
   }
@@ -199,7 +198,9 @@
       ecraEntrar();
       return;
     }
-    if (!u.emailVerified) { ecraVerificar(u); return; }
+    // a confirmação do email não é exigida (os emails do Firebase não chegavam às caixas da empresa);
+    // o acesso continua a depender da lista "acessos", gerida pelos administradores
+    if (CFG.exigirConfirmacao && !u.emailVerified) { ecraVerificar(u); return; }
     verificarAcesso(u);
   });
 

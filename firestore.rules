@@ -1,11 +1,11 @@
 rules_version = '2';
 // Regras da base de dados do Custeamento semanal.
-// Só entra quem tem o email confirmado E está na lista "acessos" (um documento por email, em minúsculas).
+// Só entra quem tem sessão iniciada E está na lista "acessos" (um documento por email, em minúsculas).
 // Administradores (campo admin = true) gerem a lista. Cole este texto em Firebase › Firestore › Regras.
 service cloud.firestore {
   match /databases/{database}/documents {
     function meuEmail() { return request.auth.token.email.lower(); }
-    function confirmado() { return request.auth != null && request.auth.token.email_verified == true; }
+    function confirmado() { return request.auth != null && request.auth.token.email is string; }
     function temAcesso() { return confirmado() && exists(/databases/$(database)/documents/acessos/$(meuEmail())); }
     function admin() { return temAcesso() && get(/databases/$(database)/documents/acessos/$(meuEmail())).data.get('admin', false) == true; }
 
