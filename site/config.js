@@ -1,13 +1,13 @@
-/* Ligação ao Firebase.
-   Cole aqui os valores de Firebase › Definições do projeto › Geral › As suas apps › App Web (firebaseConfig).
-   Estes valores são públicos por natureza: quem protege os dados é o login e as regras do Firestore (firestore.rules). */
+/* Ligação ao Firebase (projeto custeamento-movecho).
+   Valores de Firebase › Configurações do projeto › Geral › Seus aplicativos › App Web.
+   São públicos por natureza: quem protege os dados é o login e as regras do Firestore (firestore.rules). */
 window.CFG = {
   firebase: {
-    apiKey: '',
-    authDomain: '',
-    projectId: '',
-    storageBucket: '',
-    messagingSenderId: '',
-    appId: ''
+    apiKey: 'AIzaSyDitBB441kRawn1EvpZjOHNUysPISFl8ZY',
+    authDomain: 'custeamento-movecho.firebaseapp.com',
+    projectId: 'custeamento-movecho',
+    storageBucket: 'custeamento-movecho.firebasestorage.app',
+    messagingSenderId: '756230707290',
+    appId: '1:756230707290:web:0a9866884cd5636ae8e063'
   }
 };
