@@ -1,0 +1,30 @@
+rules_version = '2';
+// Regras da base de dados do Custeamento semanal.
+// Só entra quem tem o email confirmado E está na lista "acessos" (um documento por email, em minúsculas).
+// Administradores (campo admin = true) gerem a lista. Cole este texto em Firebase › Firestore › Regras.
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function meuEmail() { return request.auth.token.email.lower(); }
+    function confirmado() { return request.auth != null && request.auth.token.email_verified == true; }
+    function temAcesso() { return confirmado() && exists(/databases/$(database)/documents/acessos/$(meuEmail())); }
+    function admin() { return temAcesso() && get(/databases/$(database)/documents/acessos/$(meuEmail())).data.get('admin', false) == true; }
+
+    match /config/{id} { allow read, write: if temAcesso(); }
+    match /obras/{id} { allow read, write: if temAcesso(); }
+
+    // cópias de segurança automáticas: acrescentam-se, nunca se alteram
+    match /historico/{id} {
+      allow read: if temAcesso();
+      allow create: if temAcesso() && request.resource.data.por == meuEmail();
+    }
+
+    match /acessos/{email} {
+      allow get: if (confirmado() && email == meuEmail()) || temAcesso();
+      allow list: if temAcesso();
+      // um administrador não pode tirar o próprio acesso nem o próprio estatuto (para nunca ficar sem administradores)
+      allow create: if admin() && email == email.lower();
+      allow update: if admin() && (email != meuEmail() || request.resource.data.get('admin', false) == true);
+      allow delete: if admin() && email != meuEmail();
+    }
+  }
+}
