@@ -182,10 +182,10 @@
     let snap;
     try { snap = await fs.doc('acessos/' + norm(u.email)).get(); }
     catch (e) {
-      if (/permission/.test(e.code || '')) { ecraSemAcesso(u); return; }
+      if (/permission/.test(e.code || '')) { ecraSemAcesso(u, 'A base de dados recusou a leitura (código: regras). Confirme as regras em Firestore › Regras.'); return; }
       ecraSemAcesso(u, 'Sem ligação aos dados. Verifique a internet.'); return;
     }
-    if (!snap.exists) { ecraSemAcesso(u); return; }
+    if (!snap.exists) { ecraSemAcesso(u, 'Código: não está na lista (acessos/' + norm(u.email) + ').'); return; }
     acesso = snap.data() || {};
     utilizador = u;
     document.getElementById('lgFundo')?.remove();
